@@ -1,5 +1,6 @@
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
+import dotenv from "dotenv";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_NAME,
@@ -10,14 +11,17 @@ cloudinary.config({
 const cloudinaryUpload = async (filePath) => {
   try {
     if (!filePath) return null;
-    const res = await cloudinary.uploader.upload(filePath, {
+    const response = await cloudinary.uploader.upload(filePath, {
       resource_type: "auto",
     });
-    fs.unlinkSync(filePath);
-    return res;
+
+    return response;
   } catch (error) {
-    fs.unlinkSync(filePath);
+    console.log("Error in  Cloudinary:", error);
+
     return null;
+  } finally {
+    fs.unlinkSync(filePath);
   }
 };
 
